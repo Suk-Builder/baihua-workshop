@@ -5,6 +5,9 @@ node_modules/
 
 # 构建产物
 dist/
+wrangler.toml
+wrangler.jsonc
+.cloudflare/
 
 # 环境变量
 .env

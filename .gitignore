@@ -5,7 +5,6 @@ node_modules/
 
 # 构建产物
 dist/
-wrangler.toml
 wrangler.jsonc
 .cloudflare/
 

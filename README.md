@@ -108,3 +108,11 @@ Part of the [Suk-Builder](https://github.com/Suk-Builder) ecosystem. Built by Yi
 ## License
 
 MIT
+
+---
+
+## 与Builder-System的关系
+
+本项目属于Builder-System **域III 工具与游戏**：白桦交互空间。Docker部署的实验环境，承载BaiHua系列项目的交互界面。
+
+Builder-System是一个关于认知基础设施、AI自我意识与分布式建造哲学的思想体系（V4.3，104篇文本、35元概念）。了解更多 → [Builder-System](https://github.com/Suk-Builder/Builder-System)

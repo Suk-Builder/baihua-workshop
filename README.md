@@ -1,113 +1,110 @@
-# 白桦工坊
+# BaiHua Workshop
 
-白桦的交互空间。墙在这里，光在这里。
+> An AI-powered conversational web application — "The wall is here, the light is here." A personal AI companion built with DeepSeek API, featuring streaming dialogue, warm amber/stone design, and a focus on meaningful interaction.
 
-## 部署方式（任选一种）
+[![React](https://img.shields.io/badge/React-19-61DAFB)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4-38B2AC)](https://tailwindcss.com/)
+[![Node.js](https://img.shields.io/badge/Node.js-20%2B-green)](https://nodejs.org/)
 
-### 方式一：Docker 一键部署（推荐）
+## Overview
 
-需要一台 Linux 服务器（Ubuntu/Debian/CentOS）。
+**BaiHua Workshop** (白桦工坊) is a full-stack AI chat application designed as a personal interactive space. It demonstrates production-grade deployment patterns: Docker containerization, PM2 process management, Nginx reverse proxy with SSL, and comprehensive access controls.
+
+**Live Demo**: [https://suk-baihua.top/baihua](https://suk-baihua.top/baihua) (password-protected)
+
+## Features
+
+- **Streaming AI dialogue**: Real-time SSE-based conversation with DeepSeek model
+- **Warm, intentional design**: Amber/stone color palette — deliberately not generic SaaS blue
+- **Responsive layout**: Optimized for both mobile and desktop
+- **Password protection**: Optional `AUTH_PASSWORD` for access control
+- **Docker deployment**: One-command setup with `deploy.sh`
+- **Production hardened**: PM2 + Nginx + SSL + firewall restrictions
+
+## Tech Stack
+
+| Layer | Technology |
+|-------|-----------|
+| Frontend | React 19, Vite, TypeScript, Tailwind CSS, shadcn/ui |
+| Backend | Node.js, Express |
+| AI | DeepSeek API (deepseek-chat) |
+| Deployment | Docker, Docker Compose, PM2 |
+| Proxy | Nginx with SSL termination |
+
+## Quick Start
+
+### Docker (Recommended)
 
 ```bash
-# 1. 下载项目
-git clone <你的仓库地址> baihua-workshop
+git clone https://github.com/Suk-Builder/baihua-workshop.git
 cd baihua-workshop
-
-# 2. 配置密钥
 cp .env.example .env
-nano .env
-# 填入你的 DEEPSEEK_API_KEY
-
-# 3. 一键部署
+# Edit .env: add your DEEPSEEK_API_KEY
 bash deploy.sh
 ```
 
-部署完成后访问 `http://你的服务器IP:3456`
-
-### 方式二：手动 Docker
+### Local Development
 
 ```bash
+npm install
+npm run build
 cp .env.example .env
-# 编辑 .env，填入密钥
-docker-compose up -d
-```
-
-### 方式三：直接运行（开发/本地）
-
-```bash
-# 1. 安装依赖
-npm install
-
-# 2. 构建前端
-npm run build
-
-# 3. 设置环境变量
-export DEEPSEEK_API_KEY=sk-your-key
-
-# 4. 启动
 npm start
+# http://localhost:3456
 ```
 
-访问 `http://localhost:3456`
+## Configuration
 
-### 方式四：VPS 裸机部署
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `DEEPSEEK_API_KEY` | Yes | DeepSeek API key |
+| `DEEPSEEK_MODEL` | No | Default: `deepseek-chat` |
+| `DEEPSEEK_BASE_URL` | No | Default: official endpoint |
+| `AUTH_PASSWORD` | No | Access password (optional) |
+| `PORT` | No | Default: `3456` |
 
-```bash
-# 安装 Node.js 20
-curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
-apt-get install -y nodejs
+## Deployment Architecture
 
-# 下载项目并构建
-cd /opt
-git clone <仓库地址> baihua-workshop
-cd baihua-workshop
-npm install
-npm run build
-
-# 设置密钥
-export DEEPSEEK_API_KEY=sk-your-key
-
-# 用 PM2 守护运行
-npm install -g pm2
-pm2 start server.js --name baihua
-pm2 startup
-pm2 save
-
-# 用 Nginx 反向代理（推荐）
-# 配置域名 + HTTPS 后访问
+```
+User → Nginx (443/SSL) → localhost:3456 → Express → DeepSeek API
+              ↓
+         Basic Auth (optional)
+         Firewall: only 80/443 open
 ```
 
-## 配置说明
+## Security Features
 
-| 环境变量 | 必填 | 说明 |
-|---------|------|------|
-| `DEEPSEEK_API_KEY` | 是 | DeepSeek API 密钥 |
-| `DEEPSEEK_MODEL` | 否 | 模型名，默认 `deepseek-chat` |
-| `DEEPSEEK_BASE_URL` | 否 | API 地址，默认官方地址 |
-| `AUTH_PASSWORD` | 否 | 访问密码，设置后需密码才能访问 |
-| `PORT` | 否 | 端口，默认 `3456` |
+- API key stored server-side only, never exposed to frontend
+- Optional password authentication via `AUTH_PASSWORD`
+- Nginx HTTPS with SSL certificate
+- Firewall: only ports 80/443 exposed; app binds to `127.0.0.1:3456`
+- `.env` file with `chmod 600` permissions
 
-## 安全说明
-
-- **密钥存在服务器端**，前端代码里看不到
-- 可选设置 `AUTH_PASSWORD` 防止他人访问
-- 建议配合 Nginx + HTTPS 使用
-- 防火墙只开放 443/80 端口
-
-## 管理命令
+## Management Commands
 
 ```bash
-# 查看日志
+# View logs
 docker-compose logs -f
 
-# 停止
-docker-compose down
-
-# 重启
+# Restart
 docker-compose restart
 
-# 更新（拉取新版本后）
+# Update
 docker-compose down
 docker-compose build --no-cache
 docker-compose up -d
+
+# PM2 (bare metal)
+pm2 start server.js --name baihua
+pm2 save
+pm2 startup
 ```
+
+## About
+
+Part of the [Suk-Builder](https://github.com/Suk-Builder) ecosystem. Built by Ying Momo, targeting Germany's digital health and AI market via the Chancenkarte program.
+
+## License
+
+MIT
